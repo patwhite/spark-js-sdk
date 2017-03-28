@@ -43,7 +43,7 @@ describe(`plugin-conversation`, function() {
     before(() => fh.fetch(sampleImageSmallOnePng)
       .then((res) => {sampleImageSmallOnePng = res;}));
 
-    it(`downloads and decrypts an encrypted file`, () => spark.conversation.share(conversation, [sampleImageSmallOnePng])
+    it(`downloads and decrypts an encrypted file @canary`, () => spark.conversation.share(conversation, [sampleImageSmallOnePng])
       .then((activity) => spark.conversation.download(activity.object.files.items[0]))
       .then((f) => assert.eventually.isTrue(fh.isMatchingFile(f, sampleImageSmallOnePng))));
 
@@ -111,7 +111,7 @@ describe(`plugin-conversation`, function() {
         .then((c) => {conversation2 = c;})
     ]));
 
-    it(`retrieves a set of conversations`, () => spark.conversation.list({
+    it(`retrieves a set of conversations @canary`, () => spark.conversation.list({
       conversationsLimit: 2
     })
       .then((conversations) => {
@@ -146,7 +146,7 @@ describe(`plugin-conversation`, function() {
         return spark.conversation.post(conversation, {displayName: `first message`});
       }));
 
-    it(`retrieves activities for the specified conversation`, () => spark.conversation.listActivities({conversationId: conversation.id})
+    it(`retrieves activities for the specified conversation @canary`, () => spark.conversation.listActivities({conversationId: conversation.id})
       .then((activities) => {
         assert.isArray(activities);
         assert.lengthOf(activities, 2);

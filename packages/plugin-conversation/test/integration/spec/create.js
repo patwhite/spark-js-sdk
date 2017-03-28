@@ -87,7 +87,7 @@ describe(`plugin-conversation`, function() {
       });
 
       describe(`when {forceGrouped: true} is specified`, () => {
-        it(`creates a grouped conversation @canary`, () => spark.conversation.create({participants: [mccoy]}, {forceGrouped: true})
+        it(`creates a grouped conversation`, () => spark.conversation.create({participants: [mccoy]}, {forceGrouped: true})
           .then((conversation) => {
             assert.isConversation(conversation);
             assert.isGroupConversation(conversation);
@@ -105,7 +105,7 @@ describe(`plugin-conversation`, function() {
         .then((c) => assert.lengthOf(c.activities.items, 1)));
     });
 
-    it(`creates a conversation with a name`, () => spark.conversation.create({displayName: `displayName`, participants})
+    it(`creates a conversation with a name @canary`, () => spark.conversation.create({displayName: `displayName`, participants})
       .then((c) => spark.conversation.get(c))
       .then((c) => assert.equal(c.displayName, `displayName`)));
 

@@ -37,7 +37,7 @@ describe(`plugin-avatar`, () => {
     });
 
     describe(`when retrieving a single item`, () => {
-      it(`retrieves an avatar url`, () => {
+      it(`retrieves an avatar url @canary`, () => {
         spark.request = sinon.stub().returns(Promise.resolve({
           body: {
             '88888888-4444-4444-4444-aaaaaaaaaaa0': {

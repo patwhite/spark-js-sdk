@@ -50,7 +50,7 @@ describe(`plugin-search`, () => {
 
     after(() => spark && spark.mercury.disconnect());
 
-    it(`searches for users with a specific string`, () => {
+    it(`searches for users with a specific string @canary`, () => {
       return spark.search.people({query: `abc`})
         .then((users) => {
           assert.isArray(users);
@@ -193,7 +193,8 @@ describe(`plugin-search`, () => {
       {
         given: {
           user: `spock`,
-          query: `hElLo`
+          query: `hElLo` //,
+          // canary: false
         },
         expected: {
           path: `object.displayName`,
@@ -450,7 +451,7 @@ describe(`plugin-search`, () => {
         const {given, expected} = data;
         const conversationLimit = given.sharedIn ? given.sharedIn.length : `all`;
         const resultLimit = given.size ? `a result limit of ${given.size}` : `no result limit`;
-        const message = util.format(`${given.user} searches ${conversationLimit} conversation(s) for "${given.query}" with ${resultLimit}. Verifies ${expected.path}.`);
+        const message = util.format(`${given.user} searches ${conversationLimit} conversation(s) for "${given.query}" with ${resultLimit}. Verifies ${expected.path}. ${given.canary ? '@canary' : ''} `);
 
         it(message, () => retry(() => {
           const params = {

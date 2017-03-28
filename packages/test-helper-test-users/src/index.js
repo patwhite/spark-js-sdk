@@ -76,7 +76,8 @@ function _extractFromEnv(options) {
     },
     email: process.env.CISCOSPARK_EMAIL || process.env.CISCOSPARK_EMAIL_0,
     name: process.env.CISCOSPARK_NAME || process.env.CISCOSPARK_NAME_0,
-    password: process.env.CISCOSPARK_PASSWORD || process.env.CISCOSPARK_PASSWORD_0
+    password: process.env.CISCOSPARK_PASSWORD || process.env.CISCOSPARK_PASSWORD_0,
+    userSource: 'env'
   }];
 
   for (var i = 1; i < count; i++) {
@@ -88,12 +89,13 @@ function _extractFromEnv(options) {
       },
       email: process.env['CISCOSPARK_EMAIL_' + i],
       name: process.env['CISCOSPARK_NAME_' + i],
-      password: process.env['CISCOSPARK_PASSWORD_' + i]
+      password: process.env['CISCOSPARK_PASSWORD_' + i],
+      userSource: 'env'
     });
   }
 
   for (var j = 0; j < count; j++) {
-    assert(users[j].access_token, 'No access token available for user' + j);
+    assert(users[j].token.access_token, 'No access token available for user' + j);
   }
 
   return users;
@@ -101,10 +103,12 @@ function _extractFromEnv(options) {
 
 function _remove(users) {
   return Promise.all(users.map(function(user) {
-    return tui.remove(user)
-      .catch(function(reason) {
-        console.warn('failed to delete test user', reason);
-      });
+    if (user.userSource !== 'env' && tui) {
+      return tui.remove(user)
+        .catch(function(reason) {
+          console.warn('failed to delete test user', reason);
+        });
+    }
   }));
 }
 
@@ -114,7 +118,7 @@ module.exports = {
     assert(process.env.COMMON_IDENTITY_CLIENT_SECRET, 'COMMON_IDENTITY_CLIENT_SECRET must be defined');
 
     return new Promise(function(resolve) {
-      resolve(tui ? _create(options) : _extractFromEnv(options));
+      resolve((process.env.USE_ENVIRONMENTAL_USERS || !tui) ? _extractFromEnv(options) : _create(options));
     });
   },
 

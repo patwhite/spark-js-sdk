@@ -53,7 +53,7 @@ describe(`plugin-conversation`, function() {
     });
 
     describe(`when an activity is received`, () => {
-      it(`is decrypted and normalized`, () => {
+      it(`is decrypted and normalized @canary`, () => {
         const clientTempId = uuid.v4();
         const promise = new Promise((resolve) => {
           kirk.spark.mercury.on(`event:conversation.activity`, (event) => {

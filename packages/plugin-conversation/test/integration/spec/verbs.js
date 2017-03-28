@@ -182,7 +182,7 @@ describe(`plugin-conversation`, function() {
         richMessage = `<spark-mention data-object-id="${mccoy.id}" data-object-type="person">mccoy</spark-mention>, THIS IS A TEST MESSAGE`;
       });
 
-      it(`posts a comment to the specified conversation`, () => {
+      it(`posts a comment to the specified conversation @canary`, () => {
         return spark.conversation.post(conversation, message)
           .then((activity) => {
             assert.isActivity(activity);
@@ -220,6 +220,7 @@ describe(`plugin-conversation`, function() {
           return spark.conversation.post(conversation, message)
             .then(() => mccoy.spark.conversation.get(conversation)
               .then((c2) => {
+                assert.equal(c2.lastSeenActivityDate, lastSeenActivityDate);
                 assert.equal(c2.lastSeenActivityDate, lastSeenActivityDate);
                 assert.isAbove(c2.lastReadableActivityDate, lastReadableActivityDate);
               }));

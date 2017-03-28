@@ -127,7 +127,7 @@ describe(`plugin-conversation`, function() {
           .then((f) => assert.eventually.isTrue(fh.isMatchingFile(f, hashTestText))));
       });
 
-      it(`shares the specified image to the specified conversation`, () => spark.conversation.share(conversation, [sampleImageLargeJpg])
+      it(`shares the specified image to the specified conversation @canary`, () => spark.conversation.share(conversation, [sampleImageLargeJpg])
         .then((activity) => {
           assert.isActivity(activity);
           assert.isEncryptedActivity(activity);

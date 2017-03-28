@@ -80,7 +80,6 @@ function XUnit(runner, options) {
           .stack
           .split('\n')[2]
           .match(/\((.+?)\:(\d+)\:\d+/);
-
         if (callerInfo && callerInfo.length >= 2) {
           var callerFile = path.relative(__dirname, '..', callerInfo[1]);
           args.unshift('(FILE:' + (callerFile || 'UNKNOWN') + ')');
@@ -171,6 +170,7 @@ XUnit.prototype.write = function(line) {
  * @returns {undefined}
  */
 XUnit.prototype.test = function(test) {
+  var testFile = test.file || 'UNKNOWN';
   var attrs = {
     classname: test.parent.fullTitle(),
     name: test.title,
@@ -195,7 +195,9 @@ XUnit.prototype.test = function(test) {
 
   if (test.state === 'failed') {
     var err = test.err;
-    var failureMessage = tag('failure', {}, false, cdata(escape(err.message) + '\n' + err.stack));
+    var fileInfo = tag('file', {}, false, cdata(testFile));
+    var funcBody = tag('funcBody', {}, false, cdata(test.body || 'UNKNOWN'));
+    var failureMessage = tag('failure', {}, false, '\n' + fileInfo + '\n' + cdata(escape(err.message) + '\n' + err.stack) + '\n' + funcBody);
     this.write(tag('testcase', attrs, false, failureMessage + systemOut + systemErr));
   }
   else if (test.pending) {

@@ -93,7 +93,7 @@ describe(`Encryption`, function() {
 
     describe(`#fetchKey()`, () => {
       let key;
-      it(`retrieves a specific key`, () => spark.encryption.kms.createUnboundKeys({count: 1})
+      it(`retrieves a specific key @canary`, () => spark.encryption.kms.createUnboundKeys({count: 1})
         .then(([k]) => {
           key = k;
           return spark.encryption.kms.fetchKey({uri: key.uri});

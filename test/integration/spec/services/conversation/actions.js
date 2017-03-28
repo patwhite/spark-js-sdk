@@ -1150,7 +1150,7 @@ describe('Services', function() {
             });
         });
 
-        it('posts the specified message and ensure read/unread information', function() {
+        it('posts the specified message and ensure read/unread information @canary', function() {
           var uniqueComment = uuid.v4();
           var spockMercury = party.spock.spark.mercury;
           var waitForActivity = new Promise(function(resolve) {
@@ -1371,7 +1371,7 @@ describe('Services', function() {
           it('provides progress events for those images');
         });
 
-        describe('sharing a file', function() {
+        describe('sharing a file @canary', function() {
           var activity;
           var hashTestActivity;
 
