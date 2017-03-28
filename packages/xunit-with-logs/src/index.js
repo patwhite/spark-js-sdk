@@ -195,9 +195,9 @@ XUnit.prototype.test = function(test) {
 
   if (test.state === 'failed') {
     var err = test.err;
-    var fileInfo = tag('file', {}, false, cdata(testFile));
-    var funcBody = tag('funcBody', {}, false, cdata(test.body || 'UNKNOWN'));
-    var failureMessage = tag('failure', {}, false, '\n' + fileInfo + '\n' + cdata(escape(err.message) + '\n' + err.stack) + '\n' + funcBody);
+    var fileInfo = 'File: ' + testFile;
+    var funcBody = 'FuncBody: ' + test.body || 'UNKNOWN';
+    var failureMessage = tag('failure', {}, false, '\n' + cdata(fileInfo + '\n' + funcBody + '\n' + escape(err.message) + '\n' + err.stack));
     this.write(tag('testcase', attrs, false, failureMessage + systemOut + systemErr));
   }
   else if (test.pending) {
