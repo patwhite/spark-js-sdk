@@ -4,7 +4,7 @@
  */
 
 import {oneFlight} from '@ciscospark/common';
-import {omit} from 'lodash';
+import {last, omit} from 'lodash';
 import util from 'util';
 import FeaturesModel from './features-model';
 import {persist, waitForValue, SparkPlugin} from '@ciscospark/spark-core';
@@ -210,13 +210,65 @@ const Device = SparkPlugin.extend({
       return this.refresh();
     }
 
-    return this.request({
-      method: `POST`,
-      service: `wdm`,
-      resource: `devices`,
-      body: this.config.defaults
-    })
-      .then((res) => this._processRegistrationSuccess(res));
+    this.logger.info(`device: process.env.WDM_REGISTER=`, process.env.WDM_REGISTER);
+    if (process.env.WDM_REGISTER) {
+      this.logger.info(`device: checking if device is already registered`);
+      return this.spark.credentials.getAuthorization()
+        .then((authorization) => {
+          return this.request({
+            method: `GET`,
+            service: `wdm`,
+            resource: `devices`,
+            body: this.config.defaults,
+            headers: {
+              authorization: authorization
+            }
+          })
+          .then((res) => {
+            // this could have multiple devices registered, hence take the
+            // latest one only and remove the others
+            if (res.body && res.body.devices && res.body.devices.length > 0) {
+              this.logger.info(`device: got multiple devices registered, will use latest only`);
+              res.body = last(res.body.devices);
+              res.body.devices = undefined;
+              this.set(res.body);
+              return this.refresh()
+                .then(() => {
+                  return this._processRegistrationSuccess(res);
+                })
+            } else {
+              this.logger.info(`device: No devices registered to the user will fallback for creating new device registration`);
+              Promise.reject(new Error('No devices registered to the user'));
+            }
+          })
+          .catch((error) => {
+            return this.request({
+              method: `POST`,
+              service: `wdm`,
+              resource: `devices`,
+              body: this.config.defaults,
+            })
+              .then((res) => {
+                this.logger.info(`device: getting a new device registration after the error`);
+                return this._processRegistrationSuccess(res)
+              })
+          });
+        })
+    } else {
+      this.logger.info(`device: no need to check for already registered devices hence make a new request`);
+      return this.request({
+        method: `POST`,
+        service: `wdm`,
+        resource: `devices`,
+        body: this.config.defaults,
+      })
+        .then((res) => {
+          this.logger.info(`device: getting a new device registration`);
+          return this._processRegistrationSuccess(res);
+        })
+    }
+
+
   },
 
   @oneFlight
